@@ -18,30 +18,43 @@ int main() {
     cin >> t;
 
     while (t--) {
-        ll n;
-        cin >> n;
-        vector<pair<ll,ll>> vec(n);
-        for (int i = 0; i < n; i++) cin >> vec[i].second >> vec[i].first;
-        ll lo = 1 , hi = n , ans = 1;
-        while(lo <= hi) {
-            ll mid = (lo+hi)/2;
-            ll ct1 = 0 , ct2 = mid-1 , cnt = 0;
-            for(int i = 0 ; i < n ; i++) {
-                if(vec[i].first >= ct1 && vec[i].second >= ct2) {
-                    cnt++;
-                    ct1++;
-                    ct2--;
-                }
-            }
-            if(cnt >= mid){
-                ans = mid;
-                lo = mid+1;
-            }
-            else {
-                hi = mid-1;
+        ll n,m;
+        cin>>n>>m;
+        vector<ll>negcnt(n+1,0);
+        vector<vector<ll>>arr(m,vector<ll>(3,0));
+        for(int i=0;i<m;i++){
+            cin>>arr[i][0]>>arr[i][1]>>arr[i][2];
+            if(arr[i][0]==2){
+                negcnt[arr[i][1]]++;
+                if(arr[i][1]!=arr[i][2])negcnt[arr[i][2]]++;
             }
         }
-        cout << ans << '\n';
+
+        vector<ll>vc1(n+1,0),vc2(n+1,0);
+        for(int i=1;i<=n;i++)vc1[i]=n-negcnt[i];
+        vector<ll> vc3 = vc1;
+        sort(vc3.begin()+1,vc3.end());
+        for (int i = 1; i <= n; i++){
+            vc2[i]=lower_bound(vc3.begin()+1,vc3.end(),vc1[i])-vc3.begin()-1;
+        }
+
+        vector<ll>ans(n+1);
+        for(int i=1;i<=n;i++){
+            ans[i]=2*vc2[i]+2*vc1[i]-2*n+1;
+        }
+
+        bool psbl=true;
+        for(int i=0;i<m;i++){
+            ll sumo=ans[arr[i][1]]+ans[arr[i][2]];
+            if(arr[i][0]==1&&sumo<0)psbl=false;
+            if(arr[i][0]==2&&sumo>=0)psbl=false;
+        }
+        if(psbl){
+            cout<<"YES\n";
+            for(int i=1;i<=n;i++)cout<<ans[i]<<' ';
+            cout<<'\n';
+        }
+        else cout<<"NO\n";
 
     }
     return 0;

@@ -20,29 +20,30 @@ int main() {
     while (t--) {
         ll n;
         cin >> n;
-        vector<pair<ll,ll>> vec(n);
-        for (int i = 0; i < n; i++) cin >> vec[i].second >> vec[i].first;
-        ll lo = 1 , hi = n , ans = 1;
-        while(lo <= hi) {
-            ll mid = (lo+hi)/2;
-            ll ct1 = 0 , ct2 = mid-1 , cnt = 0;
-            for(int i = 0 ; i < n ; i++) {
-                if(vec[i].first >= ct1 && vec[i].second >= ct2) {
-                    cnt++;
-                    ct1++;
-                    ct2--;
-                }
-            }
-            if(cnt >= mid){
-                ans = mid;
-                lo = mid+1;
-            }
-            else {
-                hi = mid-1;
-            }
+        vector<vector<ll>>adj(n+1);
+        for(int i=2;i<=n;i++){
+            ll u;
+            cin>>u;
+            adj[i].push_back(u);
+            adj[u].push_back(i);
         }
-        cout << ans << '\n';
-
+        ll ans=n;
+        auto dfs=[&](auto self,ll u , ll par)-> ll{
+            ll ct1=-1,ct2=-1;
+            for(auto v:adj[u]){
+                if(v==par)continue;
+                ll temp=self(self,v,u);
+                if(temp>ct1){
+                    ct2=ct1;
+                    ct1=temp;
+                }
+                else if(temp>ct2)ct2=temp;
+            }
+            if(ct2!=-1)ans+=(ct2+1);
+            return ct1+1;
+        };
+        dfs(dfs,1,0);
+        cout<<ans<<'\n';
     }
     return 0;
 }

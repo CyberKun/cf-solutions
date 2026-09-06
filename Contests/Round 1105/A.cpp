@@ -18,31 +18,20 @@ int main() {
     cin >> t;
 
     while (t--) {
-        ll n;
-        cin >> n;
-        vector<pair<ll,ll>> vec(n);
-        for (int i = 0; i < n; i++) cin >> vec[i].second >> vec[i].first;
-        ll lo = 1 , hi = n , ans = 1;
-        while(lo <= hi) {
-            ll mid = (lo+hi)/2;
-            ll ct1 = 0 , ct2 = mid-1 , cnt = 0;
-            for(int i = 0 ; i < n ; i++) {
-                if(vec[i].first >= ct1 && vec[i].second >= ct2) {
-                    cnt++;
-                    ct1++;
-                    ct2--;
-                }
+        ll n,k;
+        cin>>n>>k;
+        ll num=0,cnt=0,ans=0;
+        for(int i=0;i<20;i++){
+            if((num+(1<<i)*k)<=n){
+                num += (1<<i)*k;
+                ans+=k;
             }
-            if(cnt >= mid){
-                ans = mid;
-                lo = mid+1;
-            }
-            else {
-                hi = mid-1;
+            else{
+                ans+=(n-num)/(1<<i);
+                break;
             }
         }
-        cout << ans << '\n';
-
+        cout<<ans<<'\n';
     }
     return 0;
 }

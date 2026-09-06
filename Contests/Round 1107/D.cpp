@@ -20,29 +20,31 @@ int main() {
     while (t--) {
         ll n;
         cin >> n;
-        vector<pair<ll,ll>> vec(n);
-        for (int i = 0; i < n; i++) cin >> vec[i].second >> vec[i].first;
-        ll lo = 1 , hi = n , ans = 1;
-        while(lo <= hi) {
-            ll mid = (lo+hi)/2;
-            ll ct1 = 0 , ct2 = mid-1 , cnt = 0;
-            for(int i = 0 ; i < n ; i++) {
-                if(vec[i].first >= ct1 && vec[i].second >= ct2) {
-                    cnt++;
-                    ct1++;
-                    ct2--;
+        vector<ll> vec(n),num(n);
+        for (int i = 0; i < n; i++) cin >> vec[i];
+        for(int i=0;i<n;i++)cin>>num[i];
+        vector<ll>tem(n,0);
+        if(vec[0]>num[0]){
+            cout<<"NO\n";
+            continue;
+        }
+        bool psbl=true;
+        ll avl=num[0]-vec[0];
+        for(int i=1;i<n;i++){
+            if(vec[i]>num[i]){
+                ll temp=vec[i]-num[i];
+                if(temp<=avl){
+                    avl-=temp;
+                }
+                else{
+                    psbl=false;
+                    break;
                 }
             }
-            if(cnt >= mid){
-                ans = mid;
-                lo = mid+1;
-            }
-            else {
-                hi = mid-1;
-            }
+            else avl+=num[i]-vec[i];
         }
-        cout << ans << '\n';
-
+        if(psbl)cout<<"YES\n";
+        else cout<<"NO\n";
     }
     return 0;
 }

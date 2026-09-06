@@ -1,13 +1,49 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
+// Function to check if we can form at least 'k' segments,
+// each having a MEX of at least 'target_mex'
+bool check(int target_mex, const vector<int> &a, int k, int n)
+{
+    if (target_mex == 0)
+    {
+        // We can always form k segments with MEX >= 0 since n >= k
+        return true;
+    }
+
+    int segments_formed = 0;
+    int required_found = 0;
+
+    // We only care about numbers from 0 to target_mex - 1
+    vector<bool> seen(target_mex, false);
+
+    for (int i = 0; i < n; i++)
+    {
+        if (a[i] < target_mex && !seen[a[i]])
+        {
+            seen[a[i]] = true;
+            required_found++;
+        }
+
+        // If we found all required numbers for the current segment
+        if (required_found == target_mex)
+        {
+            segments_formed++;
+            required_found = 0;
+            // Fast way to reset the 'seen' array without allocating a new one
+            fill(seen.begin(), seen.end(), false);
+        }
+    }
+
+    return segments_formed >= k;
+}
+
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, k;
+    cin >> n >> k;
 
     vector<int> a(n);
     for (int i = 0; i < n; i++)
@@ -15,46 +51,35 @@ void solve()
         cin >> a[i];
     }
 
-    // pref_max[i] stores the maximum element in the prefix a[0...i]
-    vector<int> pref_max(n);
-    pref_max[0] = a[0];
-    for (int i = 1; i < n; i++)
-    {
-        pref_max[i] = max(pref_max[i - 1], a[i]);
-    }
+    // Binary search for the answer
+    int left = 0, right = n;
+    int ans = 0;
 
-    // suff_min[i] stores the minimum element in the suffix a[i...n-1]
-    vector<int> suff_min(n);
-    suff_min[n - 1] = a[n - 1];
-    for (int i = n - 2; i >= 0; i--)
+    while (left <= right)
     {
-        suff_min[i] = min(suff_min[i + 1], a[i]);
-    }
+        int mid = left + (right - left) / 2;
 
-    int perfect_splits = 0;
-
-    // We check all possible valid split points (from index 0 to n-2)
-    for (int i = 0; i < n - 1; i++)
-    {
-        // If the maximum on the left is strictly less than the minimum on the right
-        if (pref_max[i] < suff_min[i + 1])
+        if (check(mid, a, k, n))
         {
-            perfect_splits++;
+            ans = mid; // mid is possible, try for a larger MEX
+            left = mid + 1;
+        }
+        else
+        {
+            right = mid - 1; // mid is impossible, try a smaller MEX
         }
     }
 
-    cout << perfect_splits << "\n";
+    cout << ans << "\n";
 }
 
 int main()
 {
-    // Fast I/O for competitive programming
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
     int t;
     cin >> t;
-
     while (t--)
     {
         solve();

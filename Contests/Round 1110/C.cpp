@@ -18,31 +18,44 @@ int main() {
     cin >> t;
 
     while (t--) {
-        ll n;
-        cin >> n;
-        vector<pair<ll,ll>> vec(n);
-        for (int i = 0; i < n; i++) cin >> vec[i].second >> vec[i].first;
-        ll lo = 1 , hi = n , ans = 1;
-        while(lo <= hi) {
-            ll mid = (lo+hi)/2;
-            ll ct1 = 0 , ct2 = mid-1 , cnt = 0;
-            for(int i = 0 ; i < n ; i++) {
-                if(vec[i].first >= ct1 && vec[i].second >= ct2) {
-                    cnt++;
-                    ct1++;
-                    ct2--;
-                }
-            }
-            if(cnt >= mid){
-                ans = mid;
-                lo = mid+1;
-            }
-            else {
-                hi = mid-1;
-            }
-        }
-        cout << ans << '\n';
+        ll n,k;
+        cin>>n>>k;
 
+        if(n==1){
+            if(k==1){
+                cout<<"YES\n";
+                cout<<0<<'\n';
+            }
+            else cout<<"NO\n";
+            continue;
+        }
+        ll temp=(n^k);
+        if(temp<n){
+            cout<<"YES\n";
+            for(int i=1;i<n;i++){
+                if(i!=temp)cout<<i<<' ';
+            }
+            if(temp!=0)cout<<0<<' '<<temp<<'\n';
+            else cout<<temp<<'\n';
+        }
+        else{
+            ll ct=0;
+            ll tempo=1;
+            while(tempo*2<n){
+                tempo*=2;
+            }
+            ll num1=tempo^temp;
+            if(num1>=n){
+                cout<<"NO\n";
+                continue;
+            }
+            cout << "YES\n";
+            for(int i=1;i<n;i++){
+                if(i!=num1&&i!=tempo)cout<<i<<' ';
+            }
+            if(num1!=0)cout<<0<<' '<<num1<<' '<<tempo<<'\n';
+            else cout<<0<<' '<<temp<<'\n';
+        }
     }
     return 0;
 }
